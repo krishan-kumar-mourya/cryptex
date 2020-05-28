@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<% include ../includes/head %>
+</head>
+
+<body class="container">
+
+	<header>
+		<% include ../includes/header %>
+	</header>
+
+	<main>
+		<div class="jumbotron">
+			<h3>Select Coin to get Details</h3>
+			<div>
+				<ul>
+					<% coins.forEach(function(coin) { %>
+						<li>
+							<a href="/coin/<%= coin.Symbol %>">
+								<%= coin.FullName %>
+							</a>
+						</li>
+					<% }); %>
+				</ul>
+			</div>
+		</div>
+	</main>
+
+	<footer>
+		<% include ../includes/footer %>
+	</footer>
+
+</body>
+
+</html>

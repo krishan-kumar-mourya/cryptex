@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="cryptex">
+
+<head>
+	<% include ../includes/head %>
+
+	<style type="text/css">
+		@charset "UTF-8";
+		[ng\:cloak],
+		[ng-cloak],
+		[data-ng-cloak],
+		[x-ng-cloak],
+		.ng-cloak,
+		.x-ng-cloak,
+		.ng-hide:not(.ng-hide-animate) {
+			display: none !important;
+		}
+	
+		ng\:form {
+			display: block;
+		}
+	
+		.ng-animate-shim {
+			visibility: hidden;
+		}
+	
+		.ng-anchor {
+			position: absolute;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="/assets/css/style_old.css">
+	<script src="/assets/js/angular.min.js"></script>
+	<script src="/assets/js/jquery.min.js"></script>
+</head>
+
+<body class="container">
+
+	<header>
+		<% include ../includes/header %>
+	</header>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-body" id="panel-body" ng-controller="CryptexController as vm">
+						<h2 class="price-display"><%= coin %> - USD
+							<span ng-class="{'up': price_old < price, 'down': price_old > price}" id="PRICE_<%= coin %>">{{price | number : 2}}</span>
+						</h2>
+						<!-- <span>
+							<select ng-model="exchange">
+								<option value="">--Select--</option>
+								<option ng-repeat="exchange in exchanges">{{exchange.exchange}}</option>
+							</select>
+						</span> -->
+
+						<!-- <table>
+							<thead>
+								<tr>
+									<th style="width: 110px;">Exchange</th>
+									<th style="width: 110px;">24h Change</th>
+									<th style="width: 110px;">Open Hour</th>
+									<th style="width: 110px;">Hour</th>
+									<th style="width: 110px;">Open Day</th>
+									<th style="width: 120px;">Day</th>
+									<th style="width: 110px;">Price</th>
+									<th style="width: 120px;">Last Trade</th>
+									<th style="width: 150px;">24h Volume</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="(name, exchange) in vm.exchanges">
+									<td>{{name}}</td>
+									<td>{{exchange.CHANGE24HOUR}} <span ng-class="{'up': exchange.PRICE > exchange.OPEN24HOUR, 'down': exchange.PRICE < exchange.OPEN24HOUR }">({{exchange.CHANGE24HOURPCT}})</span></td>
+									<td>{{exchange.OPENHOUR_f}}</td>
+									<td>H: {{exchange.HIGHHOUR_f}}<br>L: {{exchange.LOWHOUR_f}}</td>
+									<td>{{exchange.OPEN24HOUR_f}}</td>
+									<td>H: {{exchange.HIGH24HOUR_f}}<br>L: {{exchange.LOW24HOUR_f}}</td>
+									<td>{{(exchange.LASTVOLUMETO / exchange.LASTVOLUME) | number : 2}}</td>
+									<td>{{exchange.LASTVOLUME_f}}<br>{{exchange.LASTVOLUMETO_f}}</td>
+									<td>{{exchange.VOLUME24HOUR_f}}<br>{{exchange.VOLUME24HOURTO_f}}</td>
+								</tr>
+							</tbody>
+						</table>
+						<br><br> -->
+						<table>
+							<thead>
+								<tr>
+									<th style="width: 110px;">Exchange</th>
+									<th style="width: 110px;">Price</th>
+									<th style="width: 110px;">5m Change</th>
+									<th style="width: 110px;">15m Change</th>
+									<th style="width: 110px;">30m Change</th>
+									<th style="width: 110px;">1h Change</th>
+									<th style="width: 110px;">
+										<span><select ng-model="customChange" ng-change="showCustomChange()">
+											<option value="0">Select</option>
+											<option value="{{i*60}}" ng-repeat="i in [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]">{{i}}h</option>
+										</select></span>
+										Change
+									</th>
+									<!-- <th style="width: 110px;">24h Change</th> -->
+									<!-- <th style="width: 110px;">Open Hour</th> -->
+									<th style="width: 110px;">Hour</th>
+									<!-- <th style="width: 110px;">Open Day</th> -->
+									<th style="width: 120px;">Day</th>
+									<th style="width: 120px;">Last Trade</th>
+									<th style="width: 150px;">24h Volume</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="exchange in exchanges">
+									<td>{{exchange.exchange}}</td>
+									<td>$ {{exchange.price | number : 2}}</td>
+									<td><span ng-if="exchange.price5minute">$ {{exchange.price-exchange.price5minute | number : 2}} <span ng-class="{'up': exchange.price > exchange.price5minute, 'down': exchange.price < exchange.price5minute }">({{(exchange.price-exchange.price5minute)/exchange.price5minute*100 | number : 2}}%)</span></span></td>
+									<td><span ng-if="exchange.price15minute">$ {{exchange.price-exchange.price15minute | number : 2}} <span ng-class="{'up': exchange.price > exchange.price15minute, 'down': exchange.price < exchange.price15minute }">({{(exchange.price-exchange.price5minute)/exchange.price5minute*100 | number : 2}}%)</span></span></td>
+									<td><span ng-if="exchange.price30minute">$ {{exchange.price-exchange.price30minute | number : 2}} <span ng-class="{'up': exchange.price > exchange.price30minute, 'down': exchange.price < exchange.price30minute }">({{(exchange.price-exchange.price5minute)/exchange.price5minute*100 | number : 2}}%)</span></span></td>
+									<td><span ng-if="exchange.price60minute">$ {{exchange.price-exchange.price60minute | number : 2}} <span ng-class="{'up': exchange.price > exchange.price60minute, 'down': exchange.price < exchange.price60minute }">({{(exchange.price-exchange.price5minute)/exchange.price5minute*100 | number : 2}}%)</span></span></td>
+									<td><span ng-if="customChange > 0 && exchange['price'+customChange+'minute']">$ {{exchange.price-exchange['price'+customChange+'minute'] | number : 2}} <span ng-class="{'up': exchange.price > exchange['price'+customChange+'minute'], 'down': exchange.price < exchange['price'+customChange+'minute'] }">({{(exchange.price-exchange['price'+customChange+'minute'])/exchange['price'+customChange+'minute']*100 | number : 2}}%)</span></span></td>
+									<!-- <td>$ {{exchange.hday-exchange.lday | number : 2}} <span ng-class="{'up': exchange.PRICE > exchange.OPEN24HOUR, 'down': exchange.PRICE < exchange.OPEN24HOUR }">({{(exchange.hday-exchange.lday)/exchange.lday*100 | number : 2}}%)</span></td> -->
+									<!-- <td>{{exchange.OPENHOUR_f}}</td> -->
+									<td>H: Ƀ {{exchange.hhour}}<br>L: Ƀ {{exchange.lhour}}</td>
+									<!-- <td>{{exchange.OPEN24HOUR_f}}</td> -->
+									<td>H: Ƀ {{exchange.hday}}<br>L: Ƀ {{exchange.lday}}</td>
+									<td>Ƀ {{exchange.last_volume}}<br>$ {{exchange.last_volume_to}}</td>
+									<td>Ƀ {{exchange.volume_day}}<br>$ {{exchange.volume_day_to}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		COIN = '<%- coin %>';
+	</script>
+	<script src="/assets/js/socket.io.js"></script>
+	<script src="/assets/js/jquery.min.js"></script>
+	<script src="/assets/js/ccc-streamer-utilities.js"></script>
+	<script src="/assets/js/stream.js"></script>
+
+	<footer>
+		<% include ../includes/footer %>
+	</footer>
+
+</body>
+
+</html>

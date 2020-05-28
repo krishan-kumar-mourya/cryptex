@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="cryptex">
+
+<head>
+	<% include ../includes/head %>
+
+	<style type="text/css">
+		@charset "UTF-8";
+		[ng\:cloak],
+		[ng-cloak],
+		[data-ng-cloak],
+		[x-ng-cloak],
+		.ng-cloak,
+		.x-ng-cloak,
+		.ng-hide:not(.ng-hide-animate) {
+			display: none !important;
+		}
+	
+		ng\:form {
+			display: block;
+		}
+	
+		.ng-animate-shim {
+			visibility: hidden;
+		}
+	
+		.ng-anchor {
+			position: absolute;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="/static/css/style_old.css">
+	<script src="/static/js/angular.min.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+</head>
+
+<body class="container">
+
+	<header>
+		<% include ../includes/header %>
+	</header>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-body" id="panel-body" ng-controller="CryptexController as vm">
+						<h2 class="price-display"><%= coin %> - USD
+							<span class="down" id="PRICE_<%= coin %>">15517.11</span>
+						</h2>
+
+						<table>
+							<thead>
+								<th>Exchange</th>
+								<th>24h Change</th>
+								<th>Open Hour</th>
+								<th>High Hour</th>
+								<th>Low Hour</th>
+								<th>Open Day</th>
+								<th>High Day</th>
+								<th>Low Day</th>
+								<th>Last Trade Volume</th>
+								<th>Last Trade Volume To</th>
+								<th>24h Volume</th>
+								<th>24h VolumeTo</th>
+							</thead>
+							<tbody>
+								<tr ng-repeat="(name, exchange) in vm.exchanges">
+									<td>{{name}}</td>
+									<td>{{exchange.CHANGE24HOUR}} <span ng-class="{'up': exchange.PRICE > exchange.OPEN24HOUR, 'down': exchange.PRICE < exchange.OPEN24HOUR }">({{exchange.CHANGE24HOURPCT}})</span></td>
+									<td>{{exchange.OPENHOUR_f}}</td>
+									<td>{{exchange.HIGHHOUR_f}}</td>
+									<td>{{exchange.LOWHOUR_f}}</td>
+									<td>{{exchange.OPEN24HOUR_f}}</td>
+									<td>{{exchange.HIGH24HOUR_f}}</td>
+									<td>{{exchange.LOW24HOUR_f}}</td>
+									<td>{{exchange.LASTVOLUME_f}}</td>
+									<td>{{exchange.LASTVOLUMETO_f}}</td>
+									<td>{{exchange.VOLUME24HOUR_f}}</td>
+									<td>{{exchange.VOLUME24HOURTO_f}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		COIN = '<%- coin %>';
+	</script>
+	<script src="/static/js/socket.io.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/ccc-streamer-utilities.js"></script>
+	<script src="/static/js/stream.js"></script>
+
+	<footer>
+		<% include ../includes/footer %>
+	</footer>
+
+</body>
+
+</html>
